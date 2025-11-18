@@ -1,0 +1,18 @@
+14:51:57
+response
+POST
+http://localhost:5000/auth/login
+200
+📄 Headers
+{
+  "content-length": "249",
+  "content-type": "application/json; charset=utf-8"
+}
+🔐 Encrypted Body
+{
+  "cipher": "IUY64ILG5tcVoyMLe8ZDm1f6jNmlb1m0gtIuwushQBJHaeJrBkJ6pnoj0fjcGQU4gAchGbT2SfUqKHWNdtAu208ncmIndF4Z3Tnr1KKIbW8dNLhB6HS7aJfem7RYJqNInjc84ub72y7dFvAYtbJJuRtPHlk0glg7dWUDr1xKrZVSupNZdZkIizhYJ7rVHAkqfxIktlAL50gVmLkQTeWs3zykBZ/6I7OxuDJ+0L2uitg="
+}
+🔓 payload
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJHdXMgTWlsb3MiLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MzQ1MjMxNywiZXhwIjoxNzYzNDU5NTE3fQ._dHvZK9qNwP2PXMCflIEQ-liOBdIZKqrbYE8s_P09rs"
+}

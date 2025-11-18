@@ -1,0 +1,8 @@
+🚀 Secure Server running at http://localhost:5000
+[0] [SecureResquest] POST /auth/login
+[0] [httpSecure] Encrypted request body. /6pUQyFMj5hSyiGnfbdTlALn6Up6C5damP3czk+N+Hs=
+[0] [httpSecure] Decrypted request body. {"username":"Gus Milos"}
+[0] [Auth] User logged in: Gus Milos
+[0] [SecureResponse] POST /auth/login - 200 (7ms)
+[0] [httpSecure] Decrypted response body. {"token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJHdXMgTWlsb3MiLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MzQ1MjA1MCwiZXhwIjoxNzYzNDU5MjUwfQ.aaPggqUVTgQvSyAYL0gf_vod3J6Pu6jurfHy6bcipcQ"}
+[0] [httpSecure] Encrypted response body. IUY64ILG5tcVoyMLe8ZDm1f6jNmlb1m0gtIuwushQBJHaeJrBkJ6pnoj0fjcGQU4gAchGbT2SfUqKHWNdtAu208ncmIndF4Z3Tnr1KKIbW9Rx6a2zTWZptgOmqt2Ep7gjLo50wW2274V7Vf7rvaKUHicly9bJheWOETN4lQkVot799ZLDPqdyqmfADE4XDwFDXgFMQ5y1jB/mEqiS0z53lQwETwLIJOesoJJ4uwBBcs=

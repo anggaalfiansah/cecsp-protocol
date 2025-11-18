@@ -1,0 +1,108 @@
+  function downloadFile(content: string, filename: string, mimeType: string) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // --- ACTION: Run Benchmark (P1 Test) ---
+  async function handleRunBenchmark() {
+    if (!token) return;
+
+    const ITERATIONS = 1000;
+    const latencies: number[] = [];
+    let csvContent = "request_id,timestamp,duration_ms,status\n"; // Header CSV
+
+    const silentLog = () => {};
+
+    // 1. Log Start Info
+    addLog({
+      direction: "request",
+      method: "OPTIONS",
+      url: "BENCHMARK START",
+      time: new Date().toLocaleTimeString(),
+      body: `🔥 Starting P1 Test (${ITERATIONS} requests)... Please wait.`,
+    });
+
+    await new Promise((r) => setTimeout(r, 100));
+
+    try {
+      for (let i = 1; i <= ITERATIONS; i++) {
+        const start = performance.now();
+        const timestamp = new Date().toISOString();
+        let status = "success";
+
+        try {
+          await sendRequest(silentLog, "GET", "/api/profile", token, { withAuth: true });
+        } catch {
+          status = "error";
+        }
+
+        const end = performance.now();
+        const duration = end - start;
+        latencies.push(duration);
+
+        // Append row ke CSV
+        csvContent += `${i},${timestamp},${duration.toFixed(3)},${status}\n`;
+      }
+
+      // 2. Hitung Statistik
+      const min = Math.min(...latencies);
+      const max = Math.max(...latencies);
+      const avg = latencies.reduce((a, b) => a + b, 0) / latencies.length;
+
+      const sorted = [...latencies].sort((a, b) => a - b);
+      const p95 = sorted[Math.floor(sorted.length * 0.95)];
+      const p99 = sorted[Math.floor(sorted.length * 0.99)];
+
+      // 3. Generate Summary Text
+      const summaryContent = `
+========================================
+P1 - LATENCY TEST SUMMARY
+========================================
+Date        : ${new Date().toLocaleString()}
+Total Req   : ${ITERATIONS}
+----------------------------------------
+Min         : ${min.toFixed(2)} ms
+Max         : ${max.toFixed(2)} ms
+Mean (Avg)  : ${avg.toFixed(2)} ms
+P95         : ${p95.toFixed(2)} ms
+P99         : ${p99.toFixed(2)} ms
+========================================
+Note: Overhead includes Split Header Enc + Network + Server Process + Response Decrypt
+`;
+
+      // 4. Trigger Download Files
+      downloadFile(csvContent, "P1_latency.csv", "text/csv");
+      downloadFile(summaryContent, "P1_summary.txt", "text/plain");
+
+      // 5. Log Result ke UI
+      addLog({
+        direction: "response",
+        method: "OPTIONS",
+        url: "BENCHMARK RESULT",
+        status: 200,
+        time: new Date().toLocaleTimeString(),
+        body: {
+          msg: "Benchmark Complete. Files downloaded.",
+          avg: `${avg.toFixed(2)} ms`,
+          p95: `${p95.toFixed(2)} ms`,
+          min: `${min.toFixed(2)} ms`,
+          max: `${max.toFixed(2)} ms`,
+        },
+      });
+    } catch (err) {
+      addLog({
+        direction: "error",
+        method: "OPTIONS",
+        url: "BENCHMARK FAILED",
+        time: new Date().toLocaleTimeString(),
+        body: String(err),
+      });
+    }
+  }

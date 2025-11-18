@@ -1,0 +1,16 @@
+14:47:30
+request
+POST
+http://localhost:5000/auth/login
+📄 Headers
+{
+  "Content-Type": "application/json"
+}
+🔐 Encrypted Body
+{
+  "cipher": "/6pUQyFMj5hSyiGnfbdTlALn6Up6C5damP3czk+N+Hs="
+}
+🔓 payload
+{
+  "username": "Gus Milos"
+}

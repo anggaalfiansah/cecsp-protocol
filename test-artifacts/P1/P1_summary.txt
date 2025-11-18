@@ -1,0 +1,14 @@
+
+========================================
+P1 - LATENCY TEST SUMMARY
+========================================
+Date        : 11/18/2025, 3:25:03 PM
+Total Req   : 1000
+----------------------------------------
+Min         : 12.30 ms
+Max         : 57.60 ms
+Mean (Avg)  : 15.30 ms
+P95         : 20.00 ms
+P99         : 25.90 ms
+========================================
+Note: Overhead includes Split Header Enc + Network + Server Process + Response Decrypt

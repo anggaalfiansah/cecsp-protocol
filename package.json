@@ -4,9 +4,10 @@
   "type": "module",
   "scripts": {
     "install": "cd secure-server && bun install && cd ../secure-client && bun install",
+    "secret": "bun ./scripts/generate-secret.ts",
     "dev": "concurrently \"cd secure-server && bun --watch server.ts\" \"cd secure-client && bun run dev --host\"",
     "build": "bun run secret && cd secure-server && bun run build && cd ../secure-client && bun run build",
-    "secret": "bun ./scripts/generate-secret.ts"
+    "preview": "concurrently \"cd secure-server && bun run start\" \"cd secure-client && bun run preview --host\""
   },
   "dependencies": {
     "concurrently": "^9.2.1",

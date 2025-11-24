@@ -3,94 +3,91 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status: Experimental](https://img.shields.io/badge/Status-Experimental-red)](https://github.com/anggaalfiansah/cecsp-protocol)
 
+> [!NOTE]
+> Baca dalam Bahasa Indonesia: [README.id.md](./README.id.md)
+
 ## Overview
 
-**CECSP Protocol** adalah prototipe Custom Encrypted Client–Server Protocol yang menyediakan enkripsi penuh pada payload, obfuscation token, dan mekanisme anti-replay. Dirancang untuk menambah lapisan keamanan di atas HTTPS dengan *middleware* server dan klien yang bekerja secara transparan.
+**CECSP Protocol** is a prototype of a Custom Encrypted Client–Server Protocol that provides full payload encryption, token obfuscation, and anti-replay mechanisms. It is designed to add an extra security layer on top of HTTPS using transparent server and client middleware.
 
-## Masalah yang Dipecahkan
+## Problem Solved
 
-Protokol ini dibuat untuk memitigasi risiko *Token Theft* dan *Replay Attack* pada API modern.
+This protocol was built to mitigate the risks of **Token Theft** and **Replay Attacks** in modern APIs.
 
-| Ancaman | Deskripsi | Mitigasi CECSP |
+| Threat | Description | CECSP Mitigation |
 | :--- | :--- | :--- |
-| **Payload Inspection** | Data JSON mudah dibaca, memicu manipulasi parameter dan *logic flaws*. | **Full Payload Encryption** (AES-128-CBC) : Mengunci seluruh data *payload*. |
-| **Token Theft** | Token dicuri melalui XSS atau *storage inspection*. | **Token Chunking & Obfuskasi** : Token dipecah, diacak, dan disimpan terenkripsi. |
-| **Replay Attack** | Penggunaan ulang *request* yang sah oleh penyerang. | **Timestamp Validation** : Setiap *request* memiliki masa berlaku terbatas. |
+| **Payload Inspection** | JSON data is human-readable, exposing the system to parameter manipulation and *logic flaws*. | **Full Payload Encryption** (AES-128-CBC): Locks down and encrypts the entire data payload. |
+| **Token Theft** | Tokens stolen via XSS or storage inspection. | **Token Chunking & Obfuscation**: Tokens are split, randomized, and stored in an encrypted state. |
+| **Replay Attack** | Re-use of valid requests by attackers. | **Timestamp Validation**: Every request has a strict, limited validity period. |
 
-## 🚀 Performa
+## 🚀 Performance
 
-Dalam pengujian, protokol ini menunjukkan efisiensi yang tinggi:
-![Screenshot Hasil Pengujian Latensi Rata-Rata 15.3ms](test-artifacts/P1/P1-UI-latency-test-screenshot-1763454361765.png)
-* **Latensi Tambahan Rata-Rata:** **15.3 ms**
+In testing, the protocol demonstrated high efficiency:
+![Screenshot of Average Latency Test Results 15.3ms](test-artifacts/P1/P1-UI-latency-test-screenshot-1763454361765.png)
+* **Average Additional Latency:** **15.3 ms**
 
-## 💻 Instalasi dan Penggunaan
+## 💻 Installation and Usage
 
-Proyek ini terdiri dari dua komponen utama (`secure-server` dan `secure-client`)  yang berjalan di runtime **Bun**.
+This project consists of two main components (`secure-server` and `secure-client`) running on the **Bun** runtime.
 
-### Persiapan (Pre-requisites)
+### Pre-requisites
 
-Pastikan **Bun Runtime** sudah terinstal.
+Ensure that the **Bun Runtime** is installed.
 
-### 1. Clone dan Instalasi Dependensi
+### 1. Clone and Install Dependencies
 
 ```bash
 git clone [https://github.com/anggaalfiansah/cecsp-protocol.git](https://github.com/anggaalfiansah/cecsp-protocol.git)
 cd cecsp-protocol
 bun run install
-````
+```
 
-*Note: Script* `install` *menggunakan* `concurrently` *untuk menjalankan instalasi di kedua folder proyek (server dan klien) secara bersamaan.*
+*Note: The* `install` *script uses* `concurrently` *to execute installation in both project folders (server and client) simultaneously.*
 
-### 2\. Setup Kunci Rahasia (.env)
+### 2\. Setup Secret Keys (.env)
 
-Kunci enkripsi (`APP_KEY` dan `APP_IV`) tidak dikomit dan harus dibuat secara lokal:
+Encryption keys (`APP_KEY` and `APP_IV`) are not committed and must be generated locally:
 
 ```bash
 bun run secret
 ```
 
-*Note: Perintah ini menjalankan* `generate-secret.ts` *yang membuat file* `.env` *untuk konfigurasi rahasia.*
+*Note: This command runs* `generate-secret.ts` *which creates the* `.env` *file for secret configuration.*
 
-### 3\. Menjalankan Mode Development (Dev)
+### 3\. Run Development Mode (Dev)
 
-Perintah ini akan menjalankan *server* (`bun --watch server.ts`) dan *klien* (`bun run dev --host`) secara bersamaan menggunakan `concurrently`:
+This command will run the *server* (`bun --watch server.ts`) and *client* (`bun run dev --host`) simultaneously using `concurrently`:
 
 ```bash
 bun run dev
 ```
 
-### 4\. Build dan Preview (Mode Produksi Lokal)
+### 4\. Build and Preview (Local Production Mode)
 
-Untuk mensimulasikan lingkungan produksi:
+To simulate a production environment:
 
 ```bash
-# Lakukan build (termasuk generate kunci rahasia)
+# Perform build (includes secret key generation)
 bun run build 
-# Preview hasil build
+# Preview the build
 bun run preview
 ```
 
-*Note: Perintah* `preview` *menjalankan server dengan mode* `start` *dan klien dengan mode* `preview --host` *secara bersamaan.* 
+*Note: The* `preview` *command runs the server in* `start` *mode and the client in* `preview --host` *mode simultaneously.* \#\# 🛠️ Key Tech Stack
 
-## 🛠️ Tech Stack Utama
-
-  * **Runtime:** Bun 
-  * **Server:** Express.js 
+  * **Runtime:** Bun
+  * **Server:** Express.js
   * **Client:** React (via Vite)
-  * **Library Kriptografi:** `crypto-js` 
+  * **Cryptography Library:** `crypto-js`
 
-## 📜 Lisensi
+## 📜 License
 
-Proyek ini berada di bawah Lisensi MIT.
+This project is licensed under the MIT License.
 
-## 🧑‍💻 Penulis
+## 🧑‍💻 Author
 
 **Angga Alfiansah** 
 
   * Mahasiswa PJJ Sistem Informasi, Universitas Siber Asia
   * [https://www.linkedin.com/in/anggaalfiansah/]
 
-<!-- end list -->
-
-```
-```

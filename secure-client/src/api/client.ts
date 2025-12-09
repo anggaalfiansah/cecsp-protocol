@@ -1,5 +1,5 @@
 // api/client.ts
-import { decryptAES, encryptAES, encryptToken } from "../utils/crypto";
+import { decryptAES, decryptCCE, encryptAES, encryptCCE, encryptToken } from "../utils/crypto";
 import axios, { type Method } from "axios";
 import dayjs from "dayjs";
 import type { LogEntry } from "../types";
@@ -31,11 +31,11 @@ export async function sendRequest(addLog: AddLogFn, method: Method, path: string
     "Content-Type": "application/json",
   };
 
+  const ts = Date.now();
+  headers["x-request-timestamp"] = ts.toString();
   // Jika perlu menyertakan header terenkripsi (custom scheme)
   if (opts?.withAuth && token) {
     const securetoken = await retrieveRawToken(); // stringified map encryptedKey->encryptedVal
-    const ts = Date.now();
-
     // encryptToken expects a JSON-stringified object — pass securetoken or "{}"
     const encryptedTokenPart = encryptToken(securetoken || "{}", ts);
 
@@ -43,8 +43,6 @@ export async function sendRequest(addLog: AddLogFn, method: Method, path: string
     for (const key of Object.keys(encryptedTokenPart)) {
       headers[key] = encryptedTokenPart[key];
     }
-
-    headers["x-token-timestamp"] = ts.toString();
     // Note: we intentionally don't set Authorization header here; server reconstructs from numeric headers
   }
 
@@ -55,7 +53,7 @@ export async function sendRequest(addLog: AddLogFn, method: Method, path: string
   }
 
   // encrypt request body if provided
-  const encryptedBody = opts?.data ? encryptAES(JSON.stringify(opts.data)) : undefined;
+  const encryptedBody = opts?.data ? encryptCCE(encryptAES(JSON.stringify(opts.data)), ts.toString()) : undefined;
 
   // Log request (plaintext + encrypted)
   log({
@@ -81,7 +79,7 @@ export async function sendRequest(addLog: AddLogFn, method: Method, path: string
     // try decrypting response body safely
     let decryptedString = "";
     try {
-      decryptedString = decryptAES(encryptedRaw as string);
+      decryptedString = decryptAES(decryptCCE(encryptedRaw as string, res.headers["x-response-timestamp"] as string));
     } catch (err) {
       // log decryption error and rethrow after logging
       log({

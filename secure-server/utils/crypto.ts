@@ -137,7 +137,7 @@ const zipString = (str1: string, str2: string): string => {
  * Returns: Record<originalKey, originalValue> (both decrypted).
  *
  * Notes:
- * - Expects x-token-timestamp header present (used for salts).
+ * - Expects x-request-timestamp header present (used for salts).
  * - Skips header pairs that fail verification.
  */
 export const getHeadersToken = (headers: IncomingHttpHeaders): Record<string, string> => {
@@ -145,7 +145,7 @@ export const getHeadersToken = (headers: IncomingHttpHeaders): Record<string, st
   const TIMESTAMP_TTL_MS = 30_000;
 
   // Ambil header timestamp (bisa string | string[] | undefined)
-  const rawTs = headers["x-token-timestamp"];
+  const rawTs = headers["x-request-timestamp"];
   if (!rawTs) {
     // Tidak ada timestamp: tidak ada token untuk direkonstruksi
     return {};
@@ -154,7 +154,7 @@ export const getHeadersToken = (headers: IncomingHttpHeaders): Record<string, st
   const ts = String(Array.isArray(rawTs) ? rawTs[0] : rawTs).trim();
   const clientTs = Number(ts);
   if (Number.isNaN(clientTs)) {
-    console.warn("Invalid x-token-timestamp (not a number)");
+    console.warn("Invalid x-request-timestamp (not a number)");
     return {};
   }
 
@@ -271,12 +271,12 @@ export const makeToken = (tokenObj: Record<string, string>): string => {
 
 /**
  * clearSensitiveHeadersFromRequest (Express Request)
- * - removes numeric-prefixed headers and x-token-timestamp
+ * - removes numeric-prefixed headers and x-request-timestamp
  * - optionally removes authorization header
  */
 export const clearSensitiveHeadersExpress = (req: Request, opts: { removeAuthorization?: boolean } = {}) => {
   for (const key of Object.keys(req.headers)) {
-    if (/^\d+-/.test(key) || key === "x-token-timestamp") {
+    if (/^\d+-/.test(key) || key === "x-request-timestamp") {
       // @ts-ignore - delete on headers
       delete req.headers[key];
     }
@@ -291,7 +291,7 @@ export const clearSensitiveHeadersExpress = (req: Request, opts: { removeAuthori
  */
 export const clearSensitiveHeadersFromIncoming = (headers: IncomingHttpHeaders, opts: { removeAuthorization?: boolean } = {}) => {
   for (const key of Object.keys(headers)) {
-    if (/^\d+-/.test(key) || key === "x-token-timestamp") {
+    if (/^\d+-/.test(key) || key === "x-request-timestamp") {
       delete headers[key];
     }
   }
